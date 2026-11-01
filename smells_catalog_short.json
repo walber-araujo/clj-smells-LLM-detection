@@ -1,0 +1,204 @@
+{
+  "version": "1.0",
+  "total": 34,
+  "categories": [
+    {
+      "id": "state_concurrency",
+      "label": "State & Concurrency",
+      "description": "How Clojure systems manage data identity over time, mutable state, and asynchronous execution.",
+      "smells": [
+        {
+          "id": "immutability_violation",
+          "name": "Immutability Violation",
+          "summary": "Mutable state is used (e.g., redefining a def inside a function with def again) in a paradigm that emphasizes immutability."
+        },
+        {
+          "id": "blocking_inside_go",
+          "name": "Blocking Inside Go",
+          "summary": "A blocking operation is used inside a go block."
+        },
+        {
+          "id": "nested_atoms",
+          "name": "Nested Atoms",
+          "summary": "An Atom, Volatile, or Ref is stored inside another Atom."
+        },
+        {
+          "id": "misuse_of_dynamic_scope",
+          "name": "Misuse of Dynamic Scope",
+          "summary": "Dynamic variables (^:dynamic) and binding are used to carry application state or resources."
+        },
+        {
+          "id": "overengineering_with_core_async",
+          "name": "Overengineering with core.async",
+          "summary": "clojure.core.async channels are used for simple single-value asynchronous tasks."
+        },
+        {
+          "id": "dynamically_scoped_singleton_resource",
+          "name": "Dynamically-Scoped Singleton Resource",
+          "summary": "Critical resources are passed through dynamic variables and binding."
+        },
+        {
+          "id": "unnecessary_laziness",
+          "name": "Unnecessary Laziness",
+          "summary": "Lazy sequence functions (map, filter) are used where eager alternatives (mapv, into []) would suffice."
+        }
+      ]
+    },
+    {
+      "id": "environment_idioms",
+      "label": "Environment & Idioms",
+      "description": "How Clojure code interacts with the language's core abstractions, runtime behavior, and idiomatic conventions.",
+      "smells": [
+        {
+          "id": "unmanaged_resource_io",
+          "name": "Unmanaged Resource I/O",
+          "summary": "with-open is not used when handling resources that implement java.io.Closeable."
+        },
+        {
+          "id": "relying_on_load_time_side_effects",
+          "name": "Relying on Load-Time Side Effects",
+          "summary": "Code depends on top-level forms evaluated during namespace loading."
+        },
+        {
+          "id": "namespace_load_side_effects",
+          "name": "Namespace Load Side Effects",
+          "summary": "require or requiring-resolve is called in a top-level form outside the primary ns macro."
+        },
+        {
+          "id": "multiple_evaluation_in_macros",
+          "name": "Multiple Evaluation in Macros",
+          "summary": "A macro inserts an input argument form into generated code more than once without first binding it to a gensym local variable."
+        },
+        {
+          "id": "direct_usage_of_clojure_lang_rt",
+          "name": "Direct usage of clojure.lang.RT",
+          "summary": "Methods from the internal clojure.lang.RT class are called directly."
+        },
+        {
+          "id": "unnecessary_macros",
+          "name": "Unnecessary Macros",
+          "summary": "Macros are used where simpler functions or existing language constructs would suffice."
+        },
+        {
+          "id": "production_doall",
+          "name": "Production doall",
+          "summary": "doall is used to force realization of lazy sequences."
+        },
+        {
+          "id": "misuse_of_channel_closing_semantics",
+          "name": "Misuse of Channel Closing Semantics",
+          "summary": "A sentinel value is used to signal channel termination instead of a/close!."
+        },
+        {
+          "id": "refs_in_dependency_vector",
+          "name": "Refs in Dependency Vector",
+          "summary": "A mutable reference object (Atom, use-state, raw use-ref) is placed directly into a hook's dependency array instead of its dereferenced value (@ref)."
+        },
+        {
+          "id": "improper_emptiness_check",
+          "name": "Improper Emptiness Check",
+          "summary": "Verbose constructs like (not (empty? x)) or (when-not (empty? x) ...)."
+        },
+        {
+          "id": "unnecessary_into",
+          "name": "Unnecessary into",
+          "summary": "`into` is used where more concise idiomatic alternatives exist."
+        }
+      ]
+    },
+    {
+      "id": "module_boundaries_data_contracts",
+      "label": "Module Boundaries & Data Contracts",
+      "description": "The surface area of namespaces and modules, and the clarity and predictability of values exchanged across them.",
+      "smells": [
+        {
+          "id": "monolithic_namespace_split",
+          "name": "Monolithic Namespace Split",
+          "summary": "A single logical namespace is split across multiple physical files using load and in-ns."
+        },
+        {
+          "id": "implicit_namespace_dependencies",
+          "name": "Implicit Namespace Dependencies",
+          "summary": "Broad namespace imports (:use, :refer :all) or indirectly loaded namespaces are used."
+        },
+        {
+          "id": "marker_protocol",
+          "name": "Marker Protocol",
+          "summary": "`defprotocol` is used solely as a type marker for type checking instead of defining polymorphic behavior."
+        },
+        {
+          "id": "single_segment_namespace",
+          "name": "Single-segment Namespace",
+          "summary": "Single-segment namespaces are used."
+        },
+        {
+          "id": "private_multimethods",
+          "name": "Private Multimethods",
+          "summary": "A defmulti or its defmethod`s are marked private."
+        },
+        {
+          "id": "non_idiomatic_record_construction",
+          "name": "Non-Idiomatic Record Construction",
+          "summary": "Java interop constructor syntax (e.g., (Foo. 1 2)) is used to instantiate a defrecord or deftype"
+        },
+        {
+          "id": "excessive_refers",
+          "name": "Excessive Refers",
+          "summary": "A namespace explicitly refers a large number of Vars or uses (:refer :all)."
+        },
+        {
+          "id": "map_with_nil_values",
+          "name": "Map With Nil Values",
+          "summary": "`nil` values are inserted into maps."
+        },
+        {
+          "id": "non_idiomatic_parameter_binding",
+          "name": "Non-Idiomatic Parameter Binding",
+          "summary": "Confusing syntax like & [x] is used to define a single optional argument."
+        }
+      ]
+    },
+    {
+      "id": "logic_flow_readability",
+      "label": "Logic Flow & Readability",
+      "description": "The visual and cognitive path through which data transformations are expressed in code.",
+      "smells": [
+        {
+          "id": "conditional_build_up",
+          "name": "Conditional Build-Up",
+          "summary": "State is incrementally constructed through a series of let, if, and assoc expressions."
+        },
+        {
+          "id": "nested_forms",
+          "name": "Nested Forms",
+          "summary": "Multiple binding/iteration forms (let, when-let, if-let, doseq) are unnecessarily nested."
+        },
+        {
+          "id": "misused_threading",
+          "name": "Misused Threading",
+          "summary": "Threading macros (-> or ->>) are used to chain operations where the data type changes fundamentally at each step (e.g., map -> string -> File -> map)."
+        },
+        {
+          "id": "case_with_non_literal_test_values",
+          "name": "Case with Non-Literal Test Values",
+          "summary": "The `case` macro is used with runtime values (bindings or variables) as test expressions."
+        },
+        {
+          "id": "thread_ignorance",
+          "name": "Thread Ignorance",
+          "summary": "Threading macros (->, ->>, some->, cond->) are avoided where they would simplify data flow"
+        },
+        {
+          "id": "verbose_checks",
+          "name": "Verbose Checks",
+          "summary": "Manual comparisons are used instead of idiomatic predicate functions."
+        },
+        {
+          "id": "redundant_do_block",
+          "name": "Redundant do block",
+          "summary": "A do block is used inside constructs with an implicit do."
+        }
+      ]
+    }
+  ]
+}

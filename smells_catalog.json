@@ -1,0 +1,204 @@
+{
+  "version": "1.0",
+  "total": 34,
+  "categories": [
+    {
+      "id": "state_concurrency",
+      "label": "State & Concurrency",
+      "description": "How Clojure systems manage data identity over time, mutable state, and asynchronous execution.",
+      "smells": [
+        {
+          "id": "immutability_violation",
+          "name": "Immutability Violation",
+          "summary": "Mutable state is used (e.g., redefining a `def` inside a function with `def` again) in a paradigm that emphasizes immutability, introducing side effects and reduced predictability."
+        },
+        {
+          "id": "blocking_inside_go",
+          "name": "Blocking Inside Go",
+          "summary": "A blocking operation (`a/alts!!`, `a/<!`, `a/>!!`, or blocking I/O) is used inside a `go` block. `go` blocks run on a finite thread pool; blocking calls can cause thread starvation and deadlocks."
+        },
+        {
+          "id": "nested_atoms",
+          "name": "Nested Atoms",
+          "summary": "An `Atom`, `Volatile`, or `Ref` is stored inside another `Atom`. Updating the inner reference does not update the outer one, making consistent snapshots impossible."
+        },
+        {
+          "id": "misuse_of_dynamic_scope",
+          "name": "Misuse of Dynamic Scope",
+          "summary": "Dynamic variables (`def ^:dynamic`) and `binding` are used without a compelling reason—e.g., to hold core application data or pass state across async/multi-threaded contexts—introducing hidden mutable state and implicit dependencies."
+        },
+        {
+          "id": "overengineering_with_core_async",
+          "name": "Overengineering with core.async",
+          "summary": "The full `clojure.core.async` channel abstraction is used for simple single-value async tasks where a Promise/Deferred (e.g., `promesa`) or a direct callback would be simpler and more idiomatic."
+        },
+        {
+          "id": "dynamically_scoped_singleton_resource",
+          "name": "Dynamically-Scoped Singleton Resource",
+          "summary": "Dynamic variables and `binding` are used to implicitly pass critical resources (DB connections, transactions, thread pools), hiding dependencies in thread-local state instead of explicit function arguments—breaking thread dispatch and lazy sequences."
+        },
+        {
+          "id": "unnecessary_laziness",
+          "name": "Unnecessary Laziness",
+          "summary": "Lazy sequence functions (`map`, `filter`) are used by default when eager alternatives (`mapv`, `into []`) would be more efficient and communicate intent more clearly, risking unexpected realization bugs."
+        }
+      ]
+    },
+    {
+      "id": "environment_idioms",
+      "label": "Environment & Idioms",
+      "description": "How Clojure code interacts with the language's core abstractions, runtime behavior, and idiomatic conventions.",
+      "smells": [
+        {
+          "id": "unmanaged_resource_io",
+          "name": "Unmanaged Resource I/O",
+          "summary": "`with-open` is not used when handling resources that implement `java.io.Closeable` (readers, writers, sockets, streams), causing resource leaks and potential system instability."
+        },
+        {
+          "id": "relying_on_load_time_side_effects",
+          "name": "Relying on Load-Time Side Effects",
+          "summary": "Code relies on a function or macro's output being static/globally available because it was evaluated as a top-level form at namespace load time. This breaks static analysis, causes non-deterministic REPL reloading, and violates functional contracts."
+        },
+        {
+          "id": "namespace_load_side_effects",
+          "name": "Namespace Load Side Effects",
+          "summary": "`require` or `requiring-resolve` is called in a top-level form outside the primary `ns` macro, introducing hidden dynamic dependencies that bypass the build tool's static dependency graph."
+        },
+        {
+          "id": "multiple_evaluation_in_macros",
+          "name": "Multiple Evaluation in Macros",
+          "summary": "A macro inserts an input argument form into generated code more than once without first binding it to a `gensym` local variable, causing the expression to be evaluated multiple times and triggering unintended side effects."
+        },
+        {
+          "id": "direct_usage_of_clojure_lang_rt",
+          "name": "Direct usage of clojure.lang.RT",
+          "summary": "Methods from the internal `clojure.lang.RT` class (e.g., `clojure.lang.RT/iter`) are called directly. This class is not part of the public API and its use produces fragile code susceptible to breakage on language updates."
+        },
+        {
+          "id": "unnecessary_macros",
+          "name": "Unnecessary Macros",
+          "summary": "Macros are used where simpler solutions—functions or existing language constructs—would suffice. Overuse introduces unnecessary abstraction, obscures intent, and complicates debugging."
+        },
+        {
+          "id": "production_doall",
+          "name": "Production doall",
+          "summary": "`doall` is used in production code to force realization of lazy sequences, often to trigger side effects. For large sequences this causes memory spikes and signals poor abstraction choices about control flow."
+        },
+        {
+          "id": "misuse_of_channel_closing_semantics",
+          "name": "Misuse of Channel Closing Semantics",
+          "summary": "A custom sentinel value (`:done`, `:EOF`, `::end`) is used to signal stream termination instead of relying on the standard `core.async` contract of closing the channel with `a/close!`, introducing brittle inspection logic."
+        },
+        {
+          "id": "refs_in_dependency_vector",
+          "name": "Refs in Dependency Vector",
+          "summary": "A mutable reference object (Atom, `use-state`, raw `use-ref`) is placed directly into a hook's dependency array instead of its dereferenced value (`@ref`), causing the hook to either never re-run or re-run unexpectedly."
+        },
+        {
+          "id": "improper_emptiness_check",
+          "name": "Improper Emptiness Check",
+          "summary": "Verbose constructs like `(not (empty? x))` or `(when-not (empty? x) ...)` are used instead of the more concise and idiomatic `(seq x)`, reducing readability and adding redundant negation."
+        },
+        {
+          "id": "unnecessary_into",
+          "name": "Unnecessary into",
+          "summary": "`into` is used where more concise idiomatic alternatives exist—e.g., `(into [] coll)` instead of `vec`, or `(into {} (map ...))` instead of a transducer form—producing unnecessarily verbose code."
+        }
+      ]
+    },
+    {
+      "id": "module_boundaries_data_contracts",
+      "label": "Module Boundaries & Data Contracts",
+      "description": "The surface area of namespaces and modules, and the clarity and predictability of values exchanged across them.",
+      "smells": [
+        {
+          "id": "monolithic_namespace_split",
+          "name": "Monolithic Namespace Split",
+          "summary": "A single logical namespace is split across multiple physical files using `load` and `in-ns`. This breaks static analysis, dependency resolution, and predictable load ordering."
+        },
+        {
+          "id": "implicit_namespace_dependencies",
+          "name": "Implicit Namespace Dependencies",
+          "summary": "Code relies on namespaces via broad imports (`:use`, `:refer :all`) or namespaces loaded indirectly, obscuring symbol origins, increasing risk of name collisions, and reducing maintainability."
+        },
+        {
+          "id": "marker_protocol",
+          "name": "Marker Protocol",
+          "summary": "`defprotocol` is used solely as a type marker for type checking instead of defining polymorphic behavior. This introduces the protocol machinery unnecessarily, adding overhead and complexity."
+        },
+        {
+          "id": "single_segment_namespace",
+          "name": "Single-segment Namespace",
+          "summary": "Single-segment namespaces (e.g., `digest`, `config`) are used instead of hierarchical ones (e.g., `my-app.digest`), increasing naming collision risk and causing tooling errors."
+        },
+        {
+          "id": "private_multimethods",
+          "name": "Private Multimethods",
+          "summary": "A `defmulti` or its `defmethod`s are marked private. Multimethods are designed for open polymorphism and external extension; making them private defeats their purpose and forces a closed system."
+        },
+        {
+          "id": "non_idiomatic_record_construction",
+          "name": "Non-Idiomatic Record Construction",
+          "summary": "Java interop constructor syntax (e.g., `(Foo. 1 2)`) is used to instantiate a `defrecord` or `deftype` instead of the auto-generated constructor functions (`->Foo`, `map->Foo`)."
+        },
+        {
+          "id": "excessive_refers",
+          "name": "Excessive Refers",
+          "summary": "A namespace explicitly refers a large number of Vars or uses `(:refer :all)`, polluting the namespace, increasing name collision risk, and making function origins ambiguous."
+        },
+        {
+          "id": "map_with_nil_values",
+          "name": "Map With Nil Values",
+          "summary": "`nil` values are inserted into maps, making it impossible to distinguish a missing key from a key explicitly set to `nil`. This ambiguity leads to subtle bugs and unclear program intent."
+        },
+        {
+          "id": "non_idiomatic_parameter_binding",
+          "name": "Non-Idiomatic Parameter Binding",
+          "summary": "Confusing syntax like `& [x]` is used to define a single optional argument instead of the idiomatic practice of multiple function arities or a clean options map, obscuring the function's contract."
+        }
+      ]
+    },
+    {
+      "id": "logic_flow_readability",
+      "label": "Logic Flow & Readability",
+      "description": "The visual and cognitive path through which data transformations are expressed in code.",
+      "smells": [
+        {
+          "id": "conditional_build_up",
+          "name": "Conditional Build-Up",
+          "summary": "State is incrementally constructed through a series of `let`, `if`, and `assoc` expressions, producing verbose imperative-style code that scatters conditional mutations across branches."
+        },
+        {
+          "id": "nested_forms",
+          "name": "Nested Forms",
+          "summary": "Multiple binding/iteration forms (`let`, `when-let`, `if-let`, `doseq`) are unnecessarily nested instead of combined into a single flat form, adding extra indentation and visual noise without semantic value."
+        },
+        {
+          "id": "misused_threading",
+          "name": "Misused Threading",
+          "summary": "Threading macros (`->` or `->>`) are used to chain operations where the data type changes fundamentally at each step (e.g., map -> string -> File -> map). Threading is intended for homogeneous sequential transformations."
+        },
+        {
+          "id": "case_with_non_literal_test_values",
+          "name": "Case with Non-Literal Test Values",
+          "summary": "The `case` macro is used with runtime values (bindings or variables) as test expressions. `case` is optimized for compile-time literal identity, not runtime equality—use `cond` or `condp` instead."
+        },
+        {
+          "id": "thread_ignorance",
+          "name": "Thread Ignorance",
+          "summary": "Threading macros (`->`, `->>`, `some->`, `cond->`) are avoided or misused where they would provide clearer, idiomatic data flow, resulting in verbose repetitive bindings or deeply nested let/when-let forms."
+        },
+        {
+          "id": "verbose_checks",
+          "name": "Verbose Checks",
+          "summary": "Common checks (e.g., testing if a number is zero, positive, or negative) are manually implemented with `=`, `<`, `>` instead of using Clojure's built-in idiomatic functions (`zero?`, `pos?`, `neg?`)."
+        },
+        {
+          "id": "redundant_do_block",
+          "name": "Redundant do block",
+          "summary": "A `(do ...)` block is used inside constructs that already provide an implicit do—such as `let`, `when`, `fn`, `try`—adding no semantic value but introducing unnecessary syntax."
+        }
+      ]
+    }
+  ]
+}

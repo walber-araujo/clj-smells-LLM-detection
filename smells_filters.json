@@ -1,0 +1,21 @@
+{
+  "__comment": "This file maps a smell_id to a list of 'must-have' keywords. If NONE of the keywords are present in the source code, the smell is 100% impossible and will be filtered out before hitting the LLM.",
+  "filters": {
+    "multiple_evaluation_in_macros": ["defmacro"],
+    "blocking_inside_go": ["(go ", "a/go", "async/go", "core.async"],
+    "overengineering_with_core_async": ["(go ", "a/go", "async/go", "core.async", "chan"],
+    "misuse_of_channel_closing_semantics": ["chan", "core.async", "close!"],
+    "redundant_do_block": ["(do ", "(do\n"],
+    "case_with_non_literal_test_values": ["(case "],
+    "production_doall": ["(doall "],
+    "unnecessary_into": ["(into "],
+    "improper_emptiness_check": ["empty?"],
+    "private_multimethods": ["defmulti"],
+    "marker_protocol": ["defprotocol"],
+    "direct_usage_of_clojure_lang_rt": ["clojure.lang.RT"],
+    "misuse_of_dynamic_scope": ["^:dynamic", "(binding"],
+    "dynamically_scoped_singleton_resource": ["^:dynamic", "(binding"],
+    "implicit_namespace_dependencies": [":use", ":refer :all"],
+    "monolithic_namespace_split": ["(load ", "(in-ns "]
+  }
+}

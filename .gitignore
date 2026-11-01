@@ -1,0 +1,69 @@
+# ── Secrets / credentials ──────────────────────────────────────────────────────
+# Keep only .env.example (placeholders) in the repo.
+.env
+.env.*
+!.env.example
+*.env
+.envrc
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+*.jks
+id_rsa*
+id_ed25519*
+credentials*.json
+*service-account*.json
+secrets.*
+.secrets/
+.netrc
+.aws/
+.gcloud/
+
+# ── Python ─────────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+env/
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+
+# ── Local vector DB / caches (regenerable via ingest_chromadb.py) ──────────────
+.chromadb/
+chroma_db/
+*.sqlite3
+
+# ── Pipeline run outputs (large, regenerable; remove this line to publish them) ─
+results/
+
+# ── Clojure / Babashka tooling ─────────────────────────────────────────────────
+.clj-kondo/.cache/
+.lsp/
+.cpcache/
+.nrepl-port
+.calva/
+
+# ── Editors / OS / tooling ─────────────────────────────────────────────────────
+.DS_Store
+.idea/
+.vscode/
+*.swp
+.claude/settings.local.json
+.claude/
+
+# ── Fora do escopo do repositório (só o pipeline de detecção é publicado) ──────
+SESSION_SUMMARY_*.md
+dataset_explorer.html
+README (2).md
+test_parse.py
+test_parse2.py
+teste.clj
